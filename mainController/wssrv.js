@@ -117,8 +117,8 @@ channels['bots'].on('connection', function(socket) {
 });
 
 channels['admins'].on('connection', function(socket) {
+    console.log('admin connected');
     socket.emit('message', 'hello adminara!!');
-
     socket.emit('message', 'You are connected to admins channel!');
 });
 

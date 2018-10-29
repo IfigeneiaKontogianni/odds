@@ -69,6 +69,7 @@ async function init() {
         for (var el of domElements){
             mainobj.markets.push(translateObj(el));
         }
+        socket.emit('to-admins','bot '+socket.id+' dlevo !!');
         var obj = {tag:'main', children:[], html:''};
         function translateObj(domEl){
             for(var chld of domEl.childNodes){
