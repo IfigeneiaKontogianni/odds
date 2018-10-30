@@ -1,4 +1,4 @@
-var http = require('http').createServer(),
+const http = require('http').createServer(),
     io = require('socket.io').listen(http);
 
 http.listen(3000);
@@ -17,13 +17,25 @@ var botActions = {
     matchManager:{
         cmds : [
             {a:'np', loc:'https://www.bet365.gr/en'},
-            {a:'click', loc:'body > div:nth-child(1) > div > div.wc-PageView > div.wc-PageView_Main > div > div.wc-HomePage_ClassificationWrapper.wc-CommonElementStyle_WebNav > div > div > div.wn-Classification.wn-Classification_Selected'},
+            {a:'gt', loc:'https://www.bet365.gr/#/HO/'},
+            {a:'click', loc:'body > div:nth-child(1) > div > div.wc-PageView > div.wc-PageView_Main.wc-HomePage_PageViewMain > div > div.wc-HomePage_ClassificationWrapper.wc-CommonElementStyle_WebNav > div > div > div:nth-child(24)'},
             {a:'click', loc:'body > div:nth-child(1) > div > div.wc-PageView > div.wc-PageView_Main > div > div.wc-CommonElementStyle_PrematchCenter.wc-SplashPage_CenterColumn > div.sm-SplashModule > div.sm-SplashContainer > div:nth-child(2) > div.sm-MarketGroup_Open > div:nth-child(1) > div.sm-MarketContainer.sm-MarketContainer_NumColumns4.sm-Market_Open > div:nth-child(1) > div'}
         ],
         name:'007',
-        matchClass:'gl-MarketGroup_Wrapper',
-        liveClass:'gl-MarketGroup_Wrapper',
+        matchClass:'sl-CouponParticipantWithBookCloses_NameContainer ',
+        liveClass:'pi-ScoreVariantCentred_ScoreField ',
     }
+};
+
+const config = {
+    maxBotInPlayPages:8,
+    maxBotPreGamePages:40,
+    totalMatches:100,
+    totalInPlay:10,
+    totalPreGame:30,
+    totalOpenedPages:0,
+    totalClients:0,
+    totalRooms:6
 };
 
 var totalMatches=10;
@@ -33,9 +45,12 @@ channels['admins'] = io.of('/admins');
 channels['bots'] = io.of('/bots');
 channels['errors'] = io.of('/errors');
 channels['controllers'] = io.of('/controllers');
-channels['translators'] = io.of('/translators');
 channels['fuzzers'] = io.of('/fuzzers');
 channels['managers'] = io.of('/managers');
+
+function parseManagersData(data) {
+
+}
 
 channels['managers'].on('connection', function(socket) {
     socket.emit('message', 'hello manager!!');
@@ -48,9 +63,10 @@ channels['managers'].on('connection', function(socket) {
     });
     socket.on('error', function (data) {
         console.log(data);
-    })
+        channels['admins'].emit('error-from-amagers', data);
+    });
     socket.on('send-data', function (data) {
-        console.log(data);
+        console.log(JSON.stringify(data));
     })
 
 });
@@ -70,7 +86,7 @@ channels['bots'].on('connection', function(socket) {
 
     socket.on('to-admins', function(data){
         channels['admins'].emit('from-bot', data);
-    })
+    });
 
 
     channels['admins'].emit('message', 'new bot connected '+socket.botName);
