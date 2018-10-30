@@ -17,16 +17,18 @@ var botActions = {
     matchManager:{
         cmds : [
             {a:'np', loc:'https://www.bet365.gr/en'},
-            {a:'click', loc:'body > div:nth-child(1) > div > div.wc-PageView > div.wc-PageView_Main > div > div.wc-HomePage_ClassificationWrapper.wc-CommonElementStyle_WebNav > div > div > div.wn-Classification.wn-Classification_Selected'},
+            {a:'gt', loc:'https://www.bet365.gr/#/HO/'},
+            {a:'click', loc:'body > div:nth-child(1) > div > div.wc-PageView > div.wc-PageView_Main.wc-HomePage_PageViewMain > div > div.wc-HomePage_ClassificationWrapper.wc-CommonElementStyle_WebNav > div > div > div:nth-child(24)'},
             {a:'click', loc:'body > div:nth-child(1) > div > div.wc-PageView > div.wc-PageView_Main > div > div.wc-CommonElementStyle_PrematchCenter.wc-SplashPage_CenterColumn > div.sm-SplashModule > div.sm-SplashContainer > div:nth-child(2) > div.sm-MarketGroup_Open > div:nth-child(1) > div.sm-MarketContainer.sm-MarketContainer_NumColumns4.sm-Market_Open > div:nth-child(1) > div'}
         ],
         name:'007',
-        matchClass:'gl-MarketGroup_Wrapper',
-        liveClass:'gl-MarketGroup_Wrapper',
+        matchClass:'sl-CouponParticipantWithBookCloses_NameContainer ',
+        liveClass:'pi-ScoreVariantCentred_ScoreField ',
     }
 };
 
 var totalMatches=10;
+
 var totalClients=0;
 var channels = {};
 channels['admins'] = io.of('/admins');
@@ -48,9 +50,10 @@ channels['managers'].on('connection', function(socket) {
     });
     socket.on('error', function (data) {
         console.log(data);
-    })
+        channels['admins'].emit('error-from-amagers', data);
+    });
     socket.on('send-data', function (data) {
-        console.log(data);
+        console.log(JSON.stringify(data));
     })
 
 });
@@ -70,8 +73,7 @@ channels['bots'].on('connection', function(socket) {
 
     socket.on('to-admins', function(data){
         channels['admins'].emit('from-bot', data);
-    })
-
+    });
 
     channels['admins'].emit('message', 'new bot connected '+socket.botName);
 
@@ -94,7 +96,7 @@ channels['bots'].on('connection', function(socket) {
 
     socket.on('give-jobs', function () {
         socket.emit('job', botActions.bet365)
-    })
+    });
 
     socket.on('bot_jobs', function(data){
 
@@ -116,10 +118,13 @@ channels['bots'].on('connection', function(socket) {
     })
 });
 
+
 channels['admins'].on('connection', function(socket) {
     console.log('admin connected');
     socket.emit('message', 'hello adminara!!');
     socket.emit('message', 'You are connected to admins channel!');
+    socket.emit('controller-status', data);
+    socket.on('give-init-data', adminData);
 });
 
 io.sockets.on('connection', function (socket) {

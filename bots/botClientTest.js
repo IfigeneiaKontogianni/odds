@@ -11,8 +11,7 @@ socketBots.on('connect', function(){
     });
     setTimeout(function(){
         socketBots.emit('to-admins','voi8a');
-    },10000)
-
+    },10000);
     console.log('connect')
 });
 
