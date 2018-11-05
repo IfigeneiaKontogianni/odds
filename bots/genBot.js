@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const socket = require('socket.io-client')('http://91.138.138.18:3000/bots');
+const socket = require('socket.io-client')('http://localhost:3000/bots');
 
 async function init() {
 
@@ -189,5 +189,5 @@ async function init() {
             return;
         }
     }
-};
+}
 init();

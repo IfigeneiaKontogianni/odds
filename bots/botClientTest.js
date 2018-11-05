@@ -1,5 +1,5 @@
 const io = require('socket.io-client');
-var socketBots = io.connect('http://91.138.138.18:3000/bots');
+var socketBots = io.connect('http://localhost:3000/bots');
 
 socketBots.on('connect', function(){
     /*if (totalJobs.length>0) {
