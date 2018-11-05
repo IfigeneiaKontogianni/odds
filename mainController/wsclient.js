@@ -24,13 +24,12 @@ socket.on('job', function(data){
 });
 
 function execJobs(jobs) {
-    totalJobs = jobs
+    totalJobs = jobs;
     for(var job of jobs)
         console.log(job);
     setInterval(function(){
             if (jCnt>=totalJobs.length) jCnt = 0;
             console.log('Executing ', totalJobs[jCnt]);
-
             socket.emit("message",totalJobs[jCnt++]);
         }, Math.random()*2000+3000);
 }
