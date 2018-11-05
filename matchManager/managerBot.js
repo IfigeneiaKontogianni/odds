@@ -49,46 +49,27 @@ async function init() {
     });
 
     async function parsePages(p) {
-        //console.log(p);
-        var pg = p.pg;
-        var ret = await pg.evaluate((parsingClasses, ptype) => {
-            function parseData(doc) {
-                let domElements = doc.getElementsByClassName(parsingClasses.matchClass);
-                var mainobj = {
-                    matches: {inPlay: [], preGame: [], totalMatches: 0, totalInPlay: 0, totalPreGame: 0},
-                    changes: {added: {inPlay: [], preGame: []}, deleted: {inPlay: [], preGame: []}}
-                };
+        var ret = await p.pg.evaluate((parsingClasses) => {
+            let domElements = document.getElementsByClassName(parsingClasses.matchClass);
+            var mainobj = {
+                matches: {inPlay: [], preGame: [], totalMatches: 0, totalInPlay: 0, totalPreGame: 0},
+                changes: {added: {inPlay: [], preGame: []}, deleted: {inPlay: [], preGame: []}}
+            };
 
-                for (var el of domElements) {
-                    mainobj.matches.totalMatches++;
-                    if (el.getElementsByClassName(parsingClasses.liveClass).length > 0) {
-                        mainobj.matches.totalInPlay++;
-                        mainobj.matches.inPlay.push({name: el.innerText.split('\n')[0] + ' v ' + el.innerText.split('\n')[2]});
-                    } else {
-                        mainobj.matches.totalPreGame++;
-                        mainobj.matches.preGame.push({name: el.innerText.split('\n')[0]});
-                    }
+            for (var el of domElements) {
+                mainobj.matches.totalMatches++;
+                if (el.getElementsByClassName(parsingClasses.liveClass).length > 0) {
+                    mainobj.matches.totalInPlay++;
+                    mainobj.matches.inPlay.push({name: el.innerText.split('\n')[0] + ' v ' + el.innerText.split('\n')[2]});
+                } else {
+                    mainobj.matches.totalPreGame++;
+                    mainobj.matches.preGame.push({name: el.innerText.split('\n')[0]});
                 }
-                return mainobj;
             }
 
-            function parseClasses(doc) {
-                for(let cls of Object.keys(parsingClasses))
-                    if (doc.getElementsByClassName(parsingClasses[cls]).length <= 0) {
-                        throw ({error: 1, text: 'No class found' + cls});
-                        return ({error: 1, text: 'No class found' + cls});
-                    }
-                return true;
-            }
+            return mainobj;
 
-            switch (ptype) {
-                case 'parseData' :
-                    return  parseData(document);
-                    break;
-                case 'parseClasses' :
-                    return  parseClasses(document);
-            }
-        }, p.parsingClasses, p.type);
+        }, p.parsingClasses);
         return ret;
     }
 
@@ -127,123 +108,64 @@ async function init() {
         return mainobj;
     }
 
-    // function startCheckingPages() {
-    //     setInterval(async () => {
-    //             for (p of pagesToCheck) {
-    //                 var tt = await check(p);
-    //                 if (tt === true) await p.p.close();
-    //             }
-    //         },
-    //         Math.random() * 4000);
-    // }
+    startParsing();
 
     function startParsing() {
         setInterval(async () => {
                 for (p of pagesToParse) {
                     var mArray = await parsePages(p);
                     socket.emit('send-data', makeData(mArray));
+                    // console.log('runningMatchesInPlay  : ', runningMatchesInPlay);
+                    // console.log('runningMatchesPreGame  : ', runningMatchesPreGame);
                 }
             },
             Math.random() * 4000);
     }
 
     async function initPages(jobs) {
-        startParsing();
         myJobs = jobs.pages;
         for (let page of jobs.pages) {
             let pg = await execCommand(page.np);
-            await pg.waitFor(2000);
             for (let cmd of page.beforeParse) {
                 await execCommand(cmd, pg);
                 await pg.waitFor(2000);
             }
-            pagesToParse.push({pg: pg, parsingClasses: page.parsingClasses, type:'parseData'});
-
+            pagesToParse.push({pg:pg, parsingClasses:page.parsingClasses});
         }
     }
 
     async function execCommand(cmd, pg) {
-        //socket.emit('bot-exec', cmd);
-        // console.log('exec command ', cmd);
         try {
             switch (cmd.a) {
                 case 'np' :
                     let npg = await browser.newPage();
                     await npg.goto(cmd.loc);
                     await npg.waitFor(4000);
-                    //npg.on('console', consoleObj => console.log(consoleObj.text()));
+                    npg.on('console', consoleObj => console.log(consoleObj.text()));
                     //pagesToParse.push(npg);
                     return npg;
                     break;
                 case 'gt' :
                     await pg.goto(cmd.loc);
-                    await pg.waitFor(12000);
+                    await pg.waitFor(4000);
                     break;
                 case 'click' :
                     await pg.click(cmd.loc);
-                    await pg.waitFor(10000);
+                    await pg.waitFor(6000);
                     break;
             }
         } catch (error) {
             //error.pg = pg;
-            await pg.close();
-            throw(error);
+            //await pg.close();
+            //throw(error);
             socket.emit('error', error);
-            //  console.log('error', error);
-            //return {type: 'error', e: error};
+            console.log('error', error);
+            return;
         }
     }
-
-
-    async function checkDom(data) {
-        try {
-            botsToCheck = data;
-            let finalPages = [];
-            for (let botsKeys of Object.keys(botsToCheck))
-                for (let fibotp of botsToCheck[botsKeys].pages)
-                    finalPages.push(fibotp);
-            var ttp = [];
-            for (let page of finalPages) {
-                try {
-                    let pg = await execCommand(page.np);
-                    await pg.waitFor(2000);
-                    for (let bp of page.beforeParse) {
-                        //console.log('inside try/for');
-                        await execCommand(pg, bp);
-                        await pg.waitFor(2000)
-                    }
-                    //pagesToCheck.push({p: pg, parsingClasses: page.parsingClasses});
-                    ttp.push({pg: pg, parsingClasses: page.parsingClasses, type:'parseClasses'});
-
-                    await pg.waitFor(2000);
-
-                } catch (e) {
-                    socket.emit('error', e);
-                    //await e.pg.close();
-                }
-            }
-            for (var t of ttp)
-            pagesToParse.push(t);
-
-        } catch (e) {
-            //console.log('error', e);
-            socket.emit('error', e);
-            //await e.pg.close()
-        }
-        // console.log('data', data);
-    }
-
-    socket.emit('get-dom-check');
 
     socket.emit('give-jobs');
 
-    socket.on('dom-check', function (data) {
-        setInterval(async () => {
-                checkDom(data);
-            },
-            Math.random() * 60000);
-        //startCheckingPages();
-    });
 }
 
 init();
