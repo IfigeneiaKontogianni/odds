@@ -1,15 +1,12 @@
-<html lang="en" ng-app="odds" class="no-js">
+<!--<html lang="en" ng-app="controlPpanel" class="no-js">
 <script src="node_modules/angular/angular.js"></script>
 <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
-<script src="node_modules/angular-websocket/angular-websocket.js"></script>
 <script>
-    angular.module('odds', [
-        'ngWebSocket' // you may also use 'angular-websocket' if you prefer
-    ])
+    angular.module('odds', [])
     //                          WebSocket works as well
         .factory('socket', function(){
             //Creating connection with server
-            var socket = io.connect('http://localhost:3000/admins');
+            var socket = io.connect('http://91.138.138.18:3000/admins');
             socket.on('connect', function(){
 
             });
@@ -17,7 +14,7 @@
 
         })
         .controller('SomeController', function ($scope, socket ) {
-            $scope.MyData = {collection:['lola','tsitso']};
+            $scope.MyData = {collection:[]};
             $scope.socket = socket;
             $scope.socket.on('message', function (data) {
                 $scope.MyData.collection.push(data);
@@ -25,11 +22,47 @@
                 $scope.$apply();
             })
         });
-</script>
+</script>-->
 
-<section ng-controller="SomeController">
-    <ul ng-repeat="data in MyData.collection track by $index" >
-        <li> {{ data }} </li>
-    </ul>
-</section>
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html lang="en" ng-app="controlpanel" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html lang="en" ng-app="controlpanel" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html lang="en" ng-app="controlpanel" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="controlpanel" class="no-js"> <!--<![endif]-->
+<head>
+    <!--<base href="/">-->
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>LiVE ODDS - Control Panel</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="assets/app.css">
+
+</head>
+<body>
+
+<div ng-view style="position: absolute;width: 100%;height: 100%;"></div>
+
+<!-- In production use:
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
+-->
+
+<!-- Javascript -->
+<script src="node_modules/angular/angular.js"></script>
+<script src="node_modules/angular-route/angular-route.js"></script>
+<script src="node_modules/socket.io-client/dist/socket.io.js"></script>
+<script src="app.js"></script>
+<script src="ctrlpanel/controller.js"></script>
+<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.1.3.js"></script>
+</body>
 </html>

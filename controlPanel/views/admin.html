@@ -1,0 +1,57 @@
+<div class="header">
+    <div style="width: 280px;vertical-align: bottom;height: 100%;font-size: 24px;display: -webkit-box;position: relative;">admin control panel</div>
+    <div style="display: flex; width: 100%;">
+        <div style="width: 100%;">
+
+        </div>
+        <div style="text-align: -webkit-right;">
+            <div style="width: 50px;font-size: 43px;border: 1px solid;text-align: -webkit-center;height: 50px;color: #2e3e48d6;"><i class="glyphicon glyphicon-user"></i></div>
+            <div style="color: #ffffff;font-size: 12px;">{{myIdentity.socket.split('#')[1]}}</div>
+        </div>
+    </div>
+</div>
+<div style="width: 100%;position: relative;background: #253138;">
+    <div class="channelHolder">
+        <div class="channels" ng-repeat="data in channels | filter:filterChannels track by $index">
+            <div class="{{data.totalClients>0?'channelCount':'channelNoCount'}}">{{data.totalClients}}</div>
+            <div class="{{data.totalClients>0?'channelName':'channelNoName'}}">{{data.path.split('/')[1]}}</div>
+        </div>
+    </div>
+</div>
+
+<div style="display: flex">
+    <div style="background-color: green;color: #ffffff">
+        <section>
+            <ul ng-repeat="data in MyData.collection track by $index" >
+                <li> {{ data }} </li>
+            </ul>
+        </section>
+    </div>
+    <!--<div style="background: darkgrey;color: #ffffff">
+        <section>
+            <ul ng-repeat="data in channels track by $index" >
+                <li> {{ data }} </li>
+            </ul>
+        </section>
+    </div>-->
+
+    <div class="alertsHolder">
+        <!--<section>
+            <ul ng-repeat="data in MyClients.collection track by $index" >
+                <li> {{ data }} </li>
+            </ul>
+        </section>-->
+
+        <div id="alerts" >
+            <div uib-alert dismiss-on-timeout="20000" class="alertCls" ng-repeat="alert in MyClients.collection track by $index" close="closeAlert($index,MyClients)">
+                <div style="">
+                    <div class="kd_alert" style="">{{alert}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="disasterHolder" ng-if="disaster">
+    <div class="disaster" >DISASTER !!! <br> MAIN CONTROLLER IS DOWN !!! <br>RUN FOREST RUUUNNNNN !!!!!</div>
+</div>

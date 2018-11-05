@@ -1,0 +1,103 @@
+.channelHolder {
+    display: flex;
+    background: #253138;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    width: fit-content;
+}
+.channels {
+    background: #2e3e48;
+    padding: 10px;
+    margin: 10px;
+    text-align: -webkit-center;
+    color: #29b8e2;
+    font-family: Helvetica, Tahoma, sans-serif;
+    border: 1px solid #455965;
+    border-radius: 2px;
+    width: 85px;
+}
+
+.channelCount {
+    color: #29b8e2;
+    font-size: 34px;
+    font-weight: bold;
+}
+
+.channelName {
+    color: #bac0c3;
+}
+
+.channelNoCount {
+    color: #61717b;
+    font-size: 34px;
+    font-weight: bold;
+}
+
+.channelNoName {
+    color: #61717b;
+}
+
+.disasterHolder{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    background-color: #00000094;
+}
+
+.disaster {
+    padding: 20px;
+    background: red;
+    color: #fff;
+    font-size: 24px;
+    text-align: center;
+    position: relative;
+    top: 50%;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    animation: blinker 1s linear infinite;
+    border: 1px solid #ffffff;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+.alertsHolder{
+    background-color: #f9f9f9;
+    color: #ffffff;
+    padding: 10px;
+}
+
+.alertCls {
+    padding: 10px !important;
+    background-color: #ffffff;
+    width: 100%;
+    border-radius: 0px;
+    border-left: 7px solid green;
+    display: flex;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #c8ccce;
+    border-right: 1px solid #c8ccce;
+    border-top: 1px solid #c8ccce;
+}
+
+.kd_alert{
+    color: #253138;
+}
+
+.header {
+    padding: 10px;
+    background: #89b9bf;
+    color: white;
+    display: flex;
+}
+
+.close{
+    left: calc(100% - 6px) !important;
+    color: #000 !important;
+}
